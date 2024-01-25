@@ -77,7 +77,6 @@ int insertValue(hashTable *map, const char *key, const char *value)
     unsigned long index;
 
     new_item = createItem(key, value);
-
     index = hashFunction(key);
 
     ht_item *curr_item = map->items[index];
@@ -85,12 +84,18 @@ int insertValue(hashTable *map, const char *key, const char *value)
     //Checking an existing item
     if (curr_item != NULL) {
 
-        printf ("Insert error: this key is already exist\n");
-        return -1;
+        printf("Insert warning: this key is already exist\n");
+        strcpy(curr_item->value, value);
+    }
+    else {
+        if (map->count == map->size) {
+            printf("Insert error: Hast Table is full\n");
+            return -1;
+        }
+        map->items[index] = new_item;
+        map->count++;
     }
 
-    map->items[index] = new_item;
-    map->count++;
 
     return 0;
 }
@@ -130,5 +135,3 @@ unsigned long hashFunction (char* key)
 
     return index % MAX_SIZE_MAP;
 }
-
-
