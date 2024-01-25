@@ -95,11 +95,22 @@ int insertValue(hashTable *map, const char *key, const char *value)
     return 0;
 }
 
-char *getValue(hashTable *map, const char *key)
+/*
+ * @breaf               Search value in hash table via key
+ * @param map           Pointer to hash table
+ * @param key           Key access to search value
+ */
+char *searchValue(hashTable *map, const char *key)
 {
     unsigned long index = hashFunction(key);
 
-    
+    ht_item *curr_item = map->items[index];
+    if (curr_item == NULL) {
+        if(strcmp(curr_item->key, key) != 0)
+            return curr_item->value;
+    }
+
+    return NULL;
 }
 
 /*
