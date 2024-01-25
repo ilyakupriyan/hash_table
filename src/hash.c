@@ -74,8 +74,25 @@ void freeTable(hashTable *table)
 int insertValue(hashTable *map, const char *key, const char *value)
 {
     ht_item *new_item;
+    unsigned long index;
 
+    new_item = createItem(key, value);
 
+    index = hashFunction(key);
+
+    ht_item *curr_item = map->items[index];
+
+    //Checking an existing item
+    if (curr_item != NULL) {
+
+        printf ("Insert error: this key is already exist\n");
+        return -1;
+    }
+
+    map->items[index] = new_item;
+    map->count++;
+
+    return 0;
 }
 
 char *getValue(hashTable *map, const char *key)
