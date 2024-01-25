@@ -39,7 +39,7 @@ ht_item *createItem(char *key, char *value)
  * @brief               Free memory after item in heap
  * @param item              
  */
-void free_item(ht_item *item)
+void freeItem(ht_item *item)
 {
     free(item->key);
     free(item->value);
@@ -51,7 +51,7 @@ void free_item(ht_item *item)
  * @brief               Free memory after table in heap
  * @param table         Pointer to hash table
  */
-void free_table(hashTable *table)
+void freeTable(hashTable *table)
 {
     for (int iter = 0; iter < table->size; iter++)
     {

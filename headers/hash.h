@@ -25,6 +25,6 @@ int         removeValue(hashTable *map, const char *value);                     
 char *      getValue(hashTable *map, const char *key);                          //  get value located in hash table           
 
 hashTable * createHashTable(int size);                                          //  create hash table
-void        deleteHash(hashTable *map);                                         //  remove hash table
+void        freeTable(hashTable *map);                                         //  remove hash table
 
 #endif
