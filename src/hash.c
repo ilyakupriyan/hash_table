@@ -6,13 +6,15 @@
  * @brief               Create hashTable
  * @param ht_size       Max count of item in hash table
  */
-hashTable* createHashMap(int ht_size) 
+hashTable* createHashTable(int ht_size) 
 {
     hashTable *table = (hashTable *) malloc(sizeof (hashTable *));
     table->size = ht_size;
     table->count = 0;
 
     table->items = (ht_item**) calloc (ht_size, sizeof(ht_item));
+
+    return table;
 }
 
 /*
@@ -47,7 +49,7 @@ void free_item(ht_item *item)
 
 /*
  * @brief               Free memory after table in heap
- * @param               Pointer to hash table
+ * @param table         Pointer to hash table
  */
 void free_table(hashTable *table)
 {
@@ -72,6 +74,8 @@ void free_table(hashTable *table)
 int insertValue(hashTable *map, const char *key, const char *value)
 {
     ht_item *new_item;
+
+
 }
 
 char *getValue(hashTable *map, const char *key)
