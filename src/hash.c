@@ -66,6 +66,22 @@ void freeTable(hashTable *table)
 }
 
 /*
+ * @brief               Print all items of hash table
+ * @param map           Hash table
+ */
+void print_table(hashTable *map)
+{
+    puts("\nHash Table");
+    puts("------------------");
+    for (int iter = 0; iter < map->size; iter++) {
+        if (map->items[iter] != NULL) {
+            printf ("Index: %d, Key: %s, Value: %s\n", iter, map->items[iter]->key, map->items[iter]->value);
+        }
+    }
+    puts("------------------");
+}
+
+/*
  * @breaf               Insert key-value pair in hash table                     
  * @param map           Pointer to hash table              
  * @param key           Key access to value

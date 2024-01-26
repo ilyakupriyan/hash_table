@@ -26,5 +26,6 @@ char *      searchValue(hashTable *map, const char *key);                       
 
 hashTable * createHashTable(int size);                                          //  create hash table
 void        freeTable(hashTable *map);                                          //  remove hash table
+void        print_table(hashTable *map);                                        //  show the full hash table
 
 #endif
