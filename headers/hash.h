@@ -22,10 +22,11 @@ struct table {
 
 int         insertValue(hashTable*map, const char *key, const char *value);     //  insert key-value pair in hash table
 int         removeValue(hashTable *map, const char *value);                     //  remove value located in hash table
-char *      searchValue(hashTable *map, const char *key);                       //  get value located in hash table           
+char *      searchValue(hashTable *map, const char *key);                       //  get value located in hash table
 
 hashTable * createHashTable(int size);                                          //  create hash table
 void        freeTable(hashTable *map);                                          //  remove hash table
+void        freeItem(ht_item *item);                                            //  free item 
 void        print_table(hashTable *map);                                        //  show the full hash table
 
 #endif
