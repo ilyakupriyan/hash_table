@@ -1,6 +1,38 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "../headers/hash.h"
+
+/*
+ * @brief               Create an array of linked lists for handling collisions
+ * @param table         Hash table
+ * @return              Pointer to array of linked lists
+ */
+linked_list **createBuckets(hashTable *table) 
+{
+    linked_list **buckets = (linked_list **) calloc(table->size, sizeof(linked_list *));
+
+    for (int iter = 0; iter < table->size; iter++) {
+        buckets[iter] = NULL;
+    }
+
+    return buckets;
+}
+
+/*
+ * @brief               Free overflow buckets
+ * @param table         Hash table
+ */
+void freeBuckets(hashTable *table)
+{
+    linked_list **buckets = table->overflow_buckets;
+    
+    for (int iter = 0; iter < table->size; iter++) {
+        freeLinkedList(buckets[iter]);
+    }
+
+    free(buckets);
+}
 
 /*
  * @brief               Create hashTable
@@ -12,7 +44,7 @@ hashTable* createHashTable(int ht_size)
     table->size = ht_size;
     table->count = 0;
 
-    table->items = (ht_item**) calloc (ht_size, sizeof(ht_item));
+    table->overflow_buckets = createBuckets(table);
 
     return table;
 }
@@ -53,32 +85,45 @@ void freeItem(ht_item *item)
  */
 void freeTable(hashTable *table)
 {
-    for (int iter = 0; iter < table->size; iter++)
-    {
-        ht_item *item = table->items[iter];
-
-        if (item != NULL)
-            free_item(item);
-    }
-
-    free(table->items);
+    freeBuckets(table);
     free(table);
 }
 
 /*
  * @brief               Print all items of hash table
- * @param map           Hash table
+ * @param table         Hash table
  */
-void print_table(hashTable *map)
+void print_table(hashTable *table)
 {
     puts("\nHash Table");
     puts("------------------");
-    for (int iter = 0; iter < map->size; iter++) {
-        if (map->items[iter] != NULL) {
-            printf ("Index: %d, Key: %s, Value: %s\n", iter, map->items[iter]->key, map->items[iter]->value);
+    for (int iter = 0; iter < table->size; iter++) {
+        linked_list *head = table->overflow_buckets[iter];
+        
+        while (head != NULL) {
+            printf ("Index: %d, Key: %s, Value: %s\n", iter, head->item->key, head->item->value);
         }
     }
     puts("------------------");
+}
+
+/*
+ * @brief               Handle collision at the moment of inserting
+ * @param 
+ */
+void handleCollision(hashTable* table, unsigned long index, ht_item* item)
+{
+    linked_list *head = table->overflow_buckets[index];
+
+    if (head == NULL) {
+        head = allocateNode();
+        head->item = item;
+    }
+    else {
+        printf("Insert warning: this key is already exist\n");
+
+        insertLinkedList(table->overflow_buckets[index], item);
+    }
 }
 
 /*
@@ -87,7 +132,7 @@ void print_table(hashTable *map)
  * @param key           Key access to value
  * @param value         Value corresponding to the key
  */
-int insertValue(hashTable *map, const char *key, const char *value)
+int insertValue(hashTable *table, const char *key, const char *value)
 {
     ht_item *new_item;
     unsigned long index;
@@ -95,40 +140,29 @@ int insertValue(hashTable *map, const char *key, const char *value)
     new_item = createItem(key, value);
     index = hashFunction(key);
 
-    ht_item *curr_item = map->items[index];
-
-    //Checking an existing item
-    if (curr_item != NULL) {
-
-        printf("Insert warning: this key is already exist\n");
-        strcpy(curr_item->value, value);
-    }
-    else {
-        if (map->count == map->size) {
-            printf("Insert error: Hast Table is full\n");
-            return -1;
-        }
-        map->items[index] = new_item;
-        map->count++;
-    }
-
-
+    handleCollision(table, index, new_item);
+    
     return 0;
 }
 
 /*
  * @breaf               Search value in hash table via key
- * @param map           Pointer to hash table
+ * @param table           Pointer to hash table
  * @param key           Key access to search value
  */
-char *searchValue(hashTable *map, const char *key)
+char *searchValue(hashTable *table, const char *key)
 {
     unsigned long index = hashFunction(key);
+    linked_list *head = table->overflow_buckets[index];
 
-    ht_item *curr_item = map->items[index];
-    if (curr_item == NULL) {
-        if(strcmp(curr_item->key, key) != 0)
-            return curr_item->value;
+    while (head != NULL) {
+        ht_item *item = head->item;
+
+        if (strcmp(item->key, key) != 0) {
+            return item->value;
+        }
+
+        head = head->next_node;
     }
 
     return NULL;

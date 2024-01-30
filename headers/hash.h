@@ -1,6 +1,8 @@
 #ifndef HASH_H
 #define HASH_H
 
+#include "linked_list.h"
+
 #define MAX_SIZE_KEY 256
 #define MAX_SIZE_MAP 500
 
@@ -15,7 +17,7 @@ struct ht_item {
 
 //Hash map
 struct table {
-    ht_item **items;
+    linked_list **overflow_buckets;
     int size;
     int count;
 };
